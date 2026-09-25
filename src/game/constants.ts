@@ -6,5 +6,5 @@ export const EYE_HEIGHT = 1.6;
 export const PLAYER_RADIUS = 0.6;
 export const MOVE_SPEED = CELL_SIZE * 1.2; // world units / second
 export const TURN_SPEED = 2.5; // radians / second
-export const MAZE_WIDTH = 30;
-export const MAZE_HEIGHT = 30;
+export const MAZE_WIDTH = 15;
+export const MAZE_HEIGHT = 15;
