@@ -80,7 +80,7 @@ export class Game {
       const cell = this.player.getCurrentCell();
       if (cell.x === this.maze.exit.x && cell.y === this.maze.exit.y) {
         this.state = 'won';
-        this.hud.showWinMessage();
+        this.hud.celebrate();
         this.roundState.advance();
         setTimeout(() => this.startRound(), WIN_PAUSE_MS);
       }
