@@ -18,6 +18,8 @@
   },
   "trustedDependencies": [
     "@parcel/watcher",
-    "@swc/core"
+    "@swc/core",
+    "lmdb",
+    "msgpackr-extract"
   ]
 }
