@@ -13,6 +13,12 @@ const YAW_FOR_DIRECTION: Record<Direction, number> = {
   E: -Math.PI / 2,
 };
 const DIRECTION_PRIORITY: Direction[] = ['N', 'E', 'S', 'W'];
+const DIRECTION_DELTA: Record<Direction, { dx: number; dy: number }> = {
+  N: { dx: 0, dy: -1 },
+  E: { dx: 1, dy: 0 },
+  S: { dx: 0, dy: 1 },
+  W: { dx: -1, dy: 0 },
+};
 
 export interface JoystickVector {
   x: number;
@@ -63,8 +69,14 @@ export class PlayerController {
   }
 
   private initialYawFor(maze: Maze, gridPos: GridPos): number {
-    const walls = maze.cells[gridPos.y][gridPos.x].walls;
-    const openDirection = DIRECTION_PRIORITY.find((dir) => !walls[dir]);
+    const isOpen = (dir: Direction): boolean => {
+      const { dx, dy } = DIRECTION_DELTA[dir];
+      const nx = gridPos.x + dx;
+      const ny = gridPos.y + dy;
+      if (nx < 0 || ny < 0 || nx >= maze.width || ny >= maze.height) return false;
+      return !maze.isWall[ny][nx];
+    };
+    const openDirection = DIRECTION_PRIORITY.find(isOpen);
     return openDirection ? YAW_FOR_DIRECTION[openDirection] : 0;
   }
 

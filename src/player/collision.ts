@@ -1,13 +1,13 @@
-import type { Direction, Maze } from '../maze/types';
+import type { Maze } from '../maze/types';
 import { CELL_SIZE } from '../game/constants';
 
 function cellCoord(v: number): number {
   return Math.floor(v / CELL_SIZE);
 }
 
-function canCrossEdge(maze: Maze, cellX: number, cellY: number, dir: Direction): boolean {
-  if (cellX < 0 || cellY < 0 || cellX >= maze.width || cellY >= maze.height) return false;
-  return !maze.cells[cellY][cellX].walls[dir];
+function isWallAt(maze: Maze, cellX: number, cellY: number): boolean {
+  if (cellX < 0 || cellY < 0 || cellX >= maze.width || cellY >= maze.height) return true;
+  return maze.isWall[cellY][cellX];
 }
 
 function resolveAxis(
@@ -23,19 +23,18 @@ function resolveAxis(
   if (targetCell === currentCell) return proposedCoord;
 
   const movingPositive = targetCell > currentCell;
-  const dir: Direction = axis === 'x' ? (movingPositive ? 'E' : 'W') : movingPositive ? 'S' : 'N';
-  const cellX = axis === 'x' ? currentCell : otherCellCoord;
-  const cellY = axis === 'x' ? otherCellCoord : currentCell;
+  const cellX = axis === 'x' ? targetCell : otherCellCoord;
+  const cellY = axis === 'x' ? otherCellCoord : targetCell;
 
-  if (canCrossEdge(maze, cellX, cellY, dir)) return proposedCoord;
+  if (!isWallAt(maze, cellX, cellY)) return proposedCoord;
 
-  return movingPositive ? (currentCell + 1) * CELL_SIZE - radius : currentCell * CELL_SIZE + radius;
+  return movingPositive ? currentCell * CELL_SIZE + CELL_SIZE - radius : currentCell * CELL_SIZE + radius;
 }
 
 /**
- * Resolves player movement against maze walls using per-axis grid-boundary
+ * Resolves player movement against solid wall cells using per-axis grid-cell
  * checks ("slide along walls") rather than physics/raycasting — cheap and
- * sufficient since the maze is a fixed grid.
+ * sufficient since every wall is a full grid-cell cube.
  */
 export function resolveMovement(
   maze: Maze,
